@@ -59,25 +59,17 @@ async function main() {
 
     const { victimClient, SponsorClient } = await initClients();
 
-    console.log('[*] Victim signing authorization...');
-    const authSelf = await victimClient.signAuthorization({
+    const authRelayer = await victimClient.signAuthorization({
         contractAddress: CONTRACT,
-        executor: CONTRACT
-    });
-    console.log('[+] Victim auth created');
-
-    console.log('[*] Sponsor signing authorization...');
-    const authRelayer = await SponsorClient.signAuthorization({
-        contractAddress: CONTRACT,
-        args: [CONTRACT]
+        args: [SponsorAccount.address]
     });
     console.log('[+] Sponsor auth created');
 
     console.log('[*] Sending revoke transaction...');
     const hash = await SponsorClient.sendTransaction({
-        to: SponsorAccount.address,
+        to: CONTRACT,
         data: '0x',
-        authorizationList: [authSelf, authRelayer],
+        authorizationList: [authRelayer],
         account: SponsorAccount,
     });
 
