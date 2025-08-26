@@ -61,7 +61,7 @@ async function main() {
 
     const authRelayer = await victimClient.signAuthorization({
         contractAddress: CONTRACT,
-        args: [SponsorAccount.address]
+        executor: SponsorAccount.address
     });
     console.log('[+] Sponsor auth created');
 
