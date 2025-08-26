@@ -54,10 +54,10 @@ REVOKE_7702_CONTRACT=0x0000000000000000000000000000000000000000
 RPC=https://1rpc.io/sepolia
 ```
 
-VICTIMS → Private key of the victim account (hex string).
-SPONSOR → Private key of the sponsor account (hex string).
-REVOKE_7702_CONTRACT → Address of the revoke contract.
-RPC → RPC endpoint for the target chain (e.g., Sepolia, BNB, Avalanche, Mantle, etc).
+* VICTIMS → Private key of the victim account (hex string).
+* SPONSOR → Private key of the sponsor account (hex string).
+* REVOKE_7702_CONTRACT → Address of the revoke contract.
+* RPC → RPC endpoint for the target chain (e.g., Sepolia, BNB, Avalanche, Mantle, etc).
 
 ## How It Works
 Victim signs an authorization message delegating revoke rights.
