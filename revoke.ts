@@ -20,10 +20,13 @@ const CHAIN_INFO: Record<number, { name: string, symbol: string }> = {
 };
 
 export async function detectChain(RPC_URL: string) {
+    console.log('[*] Detecting chain from RPC:', RPC_URL);
     const tempPublic = createPublicClient({ transport: http(RPC_URL) });
     const chainId = await tempPublic.getChainId();
+    console.log('[*] Detected chainId:', chainId);
 
     const chainInfo = CHAIN_INFO[chainId] ?? { name: `Chain-${chainId}`, symbol: 'ETH' };
+    console.log('[*] Chain info:', chainInfo);
 
     return defineChain({
         id: chainId,
@@ -35,7 +38,10 @@ export async function detectChain(RPC_URL: string) {
 }
 
 async function initClients() {
+    console.log('[*] Initializing clients...');
     const chain = await detectChain(RPC_URL);
+    console.log('[*] Using chain:', chain.name);
+
     const publicClient = createPublicClient({ chain, transport: http(RPC_URL) });
 
     return {
@@ -46,18 +52,28 @@ async function initClients() {
 }
 
 async function main() {
+    console.log('[*] Starting revoke flow...');
+    console.log('[*] Victim address:', victimAccount.address);
+    console.log('[*] Sponsor address:', SponsorAccount.address);
+    console.log('[*] Revoke contract:', CONTRACT);
+
     const { victimClient, SponsorClient } = await initClients();
 
+    console.log('[*] Victim signing authorization...');
     const authSelf = await victimClient.signAuthorization({
         contractAddress: CONTRACT,
         executor: CONTRACT
     });
+    console.log('[+] Victim auth created');
 
+    console.log('[*] Sponsor signing authorization...');
     const authRelayer = await SponsorClient.signAuthorization({
         contractAddress: CONTRACT,
         args: [CONTRACT]
     });
+    console.log('[+] Sponsor auth created');
 
+    console.log('[*] Sending revoke transaction...');
     const hash = await SponsorClient.sendTransaction({
         to: SponsorAccount.address,
         data: '0x',
@@ -65,7 +81,9 @@ async function main() {
         account: SponsorAccount,
     });
 
-    console.log('Revoke tx sent:', hash);
+    console.log('[+] Revoke tx sent:', hash);
 }
 
-main().catch(console.error);
+main().catch((err) => {
+    console.error('[!] Error during execution:', err);
+});
